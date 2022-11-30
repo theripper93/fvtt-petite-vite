@@ -1,4 +1,4 @@
-import { createApp } from 'https://unpkg.com/petite-vue?module'
+import { createApp, reactive } from 'https://unpkg.com/petite-vue?module'
 
 globalThis._vueTemplateCache = {};
 
@@ -9,10 +9,14 @@ class PVueApplication extends Application{
 
     async _renderInner(data) {
         const vueData = await renderVue(this.template, await this.getData())
-        this._vueApp = vueData.app;
+        this._vueStore = vueData.store;
         let html = vueData.el;
         if ( html === "" ) throw new Error(`No data was returned from template ${this.template}`);
         return $(html);
+    }
+
+    get store(){
+        return this._vueStore;
     }
 
     async getData() {
@@ -25,8 +29,9 @@ async function renderVue(template, data){
     _vueTemplateCache[template] = vueTemplate;
     const el = document.createElement('div');
     el.innerHTML = vueTemplate;
-    const app = createApp(data).mount(el);
-    return {app, el};
+    const store = reactive(data);
+    const app = createApp({store}).mount(el);
+    return {app, el, store};
 }
 
 globalThis.PVueApplication = PVueApplication;

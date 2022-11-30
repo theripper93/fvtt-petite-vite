@@ -17,8 +17,13 @@ Hooks.on("ready", () => {
     }
 
     getData() {
+      if(this._vueData) return this._vueData;
+      const actor = game.actors.getName("Beiro (Half-Elf Bard)").toObject();
+      debugger;
       return {
         count: 0,
+        actor: actor,
+        items: actor.items,
         increment() {
           this.count++;
         },
