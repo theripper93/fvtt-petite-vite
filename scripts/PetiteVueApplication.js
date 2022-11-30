@@ -61,7 +61,7 @@ class PVueApplication extends Application{
     }
 
     async _onSubmit(event) {
-        event.preventDefault();
+        event?.preventDefault();
         await this.updateObject();
     }
 
