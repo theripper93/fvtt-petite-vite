@@ -15,21 +15,7 @@ Hooks.on("ready", () => {
         height: 400,
       };
     }
-
-    getData() {
-      if(this._vueData) return this._vueData;
-      const actor = game.actors.getName("Beiro (Half-Elf Bard)").toObject();
-      debugger;
-      return {
-        count: 0,
-        actor: actor,
-        items: actor.items,
-        increment() {
-          this.count++;
-        },
-      }
-    }
   }
 
-  new TestVueApp().render(true);
+  new TestVueApp({object: game.actors.getName("Beiro (Half-Elf Bard)")}).render(true);
 });

@@ -1,8 +1,7 @@
-<button @click="store.increment">Add to count (Current: {{store.count}})</button>
-
+<span>{{l("levels3dpreview.mapgen.generator.title")}}</span>
 <ol>
-    <li v-for="item of store.actor.items">
+    <li v-for="item of store.items">
         {{item.name}}
-        <input v-model="text" value="{{item.name}}"/>
+        <input v-model="item.name" value="{{item.name}}"/>
     </li>
 </ol>

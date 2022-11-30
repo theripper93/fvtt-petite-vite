@@ -5,9 +5,10 @@ globalThis._vueTemplateCache = {};
 class PVueApplication extends Application{
     constructor(...args){
         super(...args);
+        this._object = args[0].object ?? null;
     }
 
-    async _renderInner(data) {
+    async _renderInner() {
         const vueData = await renderVue(this.template, await this.getData())
         this._vueStore = vueData.store;
         let html = vueData.el;
@@ -20,7 +21,16 @@ class PVueApplication extends Application{
     }
 
     async getData() {
-        return {};
+        if(this._object.documentName){
+            return this._object.toObject();
+        }
+    }
+
+    async updateObject() {
+        const data = this.store;
+        if ( this._object ) {
+            await this._object.update(data);
+        }
     }
 }
 
@@ -30,8 +40,17 @@ async function renderVue(template, data){
     const el = document.createElement('div');
     el.innerHTML = vueTemplate;
     const store = reactive(data);
-    const app = createApp({store}).mount(el);
+    const app = createApp({store, ...helpers}).mount(el);
     return {app, el, store};
 }
+
+const helpers = {
+    localize(...args){
+        return game.i18n.localize(...args);
+    },
+    l(...args){
+        return this.localize(...args);
+    }
+};
 
 globalThis.PVueApplication = PVueApplication;
