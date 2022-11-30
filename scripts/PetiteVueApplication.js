@@ -38,7 +38,7 @@ class PVueApplication extends Application{
     }
 
     async _renderInner() {
-        const vueData = await renderVue(this.template, await this.getData())
+        const vueData = await PVueApplication.renderVue(this.template, await this.getData())
         this._vueStore = vueData.store;
         let html = vueData.el;
         if ( html === "" ) throw new Error(`No data was returned from template ${this.template}`);
@@ -104,16 +104,16 @@ class PVueApplication extends Application{
           autoUpdate: false,
         };
       }
-}
 
-async function renderVue(template, data){
-    const vueTemplate = _vueTemplateCache[template] ?? await fetch(template).then(response => response.text());
-    _vueTemplateCache[template] = vueTemplate;
-    const el = document.createElement('div');
-    el.innerHTML = vueTemplate;
-    const store = reactive(data);
-    const app = createApp({store, ...helpers}).mount(el);
-    return {app, el, store};
+      static async renderVue(template, data){
+        const vueTemplate = _vueTemplateCache[template] ?? await fetch(template).then(response => response.text());
+        _vueTemplateCache[template] = vueTemplate;
+        const el = document.createElement('div');
+        el.innerHTML = vueTemplate;
+        const store = reactive(data);
+        const app = createApp({store, ...helpers}).mount(el);
+        return {app, el, store};
+    }
 }
 
 function updateObjectRecursive(object1, object2){
