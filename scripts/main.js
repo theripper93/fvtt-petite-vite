@@ -13,8 +13,8 @@ Hooks.on("ready", () => {
         resizable: true,
         width: 300,
         height: 400,
-        updateOnClose: true,
-        updateOnChange: true,
+        submitOnClose: true,
+        submitOnChange: true,
         autoUpdate: true,
       };
     }

@@ -97,8 +97,8 @@ class PVueApplication extends Application{
           title: "",
           template: null,
           scrollY: [],
-          updateOnClose: false,
-          updateOnChange: false,
+          submitOnClose: false,
+          submitOnChange: false,
           autoUpdate: false,
         };
       }
