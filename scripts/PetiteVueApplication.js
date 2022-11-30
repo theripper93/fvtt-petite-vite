@@ -1,4 +1,4 @@
-import { createApp, reactive } from 'https://unpkg.com/petite-vue?module'
+import { createApp, reactive } from './pVue.js';
 
 globalThis._vueTemplateCache = {};
 
