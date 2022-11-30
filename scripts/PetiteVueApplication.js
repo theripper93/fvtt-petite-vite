@@ -11,7 +11,7 @@ class PVueApplication extends Application{
 
     async activateListeners(html) {
         super.activateListeners(html);
-        if(this.options.updateOnChange){
+        if(this.options.submitOnChange){
             html.on('change', 'input, select, textarea', (event) => this._onSubmit(event));
         }
         if(this.options.autoUpdate && this._object?.documentName){
@@ -73,8 +73,8 @@ class PVueApplication extends Application{
     }
 
     async close() {
-        if(this.options.updateOnClose){
-            await this.updateObject();
+        if(this.options.submitOnClose){
+            await this._onSubmit();
         }
         this._hookIds.forEach(hookId => Hooks.off(...hookId));
         return super.close();
