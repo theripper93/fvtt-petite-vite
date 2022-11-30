@@ -1,7 +1,7 @@
 {
-    "title": "fvtt-petite-vite",
+    "title": "fvtt-petite-vue",
     "description": "desc",
-    "id": "fvtt-petite-vite",
+    "id": "fvtt-petite-vue",
     "version": "1.0",
     "authors": [
       {
@@ -19,11 +19,10 @@
     ],
     "scripts": [
         "scripts/config.js",
-        "scripts/main.js",
-        "scripts/module.js"
+        "scripts/main.js"
     ],
     "esmodules": [
-      "scripts/PetiteViteApplication.js"
+      "scripts/PetiteVueApplication.js"
     ],
     "styles": [
       "styles/module.css"
