@@ -15,21 +15,23 @@ class PVueApplication extends Application{
             html.on('change', 'input, select, textarea', (event) => this._onSubmit(event));
         }
         if(this.options.autoUpdate && this._object?.documentName){
-            const hookId = Hooks.on(`update${this._object.documentName}`, (document, data, options, userId) => {
+            const hookName = `update${this._object.documentName}`;
+            const hookId = Hooks.on(hookName, (document, data, options, userId) => {
                 if(document.id === this._object.id){
                     this._updateVUEData();
                 }
             });
-            this._hookId = hookId;
+            this._hookIds.push([hookName, hookId]);
 
             for(let s of Object.values(this._object.schema.fields)){
                 if(s.element?.documentName){
-                    const hookId2 = Hooks.on(`update${s.element.documentName}`, (document, data, options, userId) => {
+                    const hookName2 = `update${s.element.documentName}`;
+                    const hookId2 = Hooks.on(hookName2, (document, data, options, userId) => {
                         if(document.parent == this._object){
                             this._updateVUEData();
                         }
                     });
-                    this._hookIds.push(hookId2);
+                    this._hookIds.push([hookName2, hookId2]);
                 }
             }
         }
@@ -74,7 +76,7 @@ class PVueApplication extends Application{
         if(this.options.updateOnClose){
             await this.updateObject();
         }
-        this._hookIds.forEach(hookId => Hooks.off(hookId));
+        this._hookIds.forEach(hookId => Hooks.off(...hookId));
         return super.close();
     }
 
