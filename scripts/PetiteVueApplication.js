@@ -8,9 +8,15 @@ class PVueApplication extends Application{
     }
 
     async _renderInner(data) {
-        let html = await renderVue(this.template, data);
+        const vueData = await renderVue(this.template, await this.getData())
+        this._vueApp = vueData.app;
+        let html = vueData.el;
         if ( html === "" ) throw new Error(`No data was returned from template ${this.template}`);
         return $(html);
+    }
+
+    async getData() {
+        return {};
     }
 }
 
@@ -19,13 +25,8 @@ async function renderVue(template, data){
     _vueTemplateCache[template] = vueTemplate;
     const el = document.createElement('div');
     el.innerHTML = vueTemplate;
-    const app = createApp({
-        data() {
-            return data;
-        }
-    });
-    app.mount(el);
-    return el;
+    const app = createApp(data).mount(el);
+    return {app, el};
 }
 
 globalThis.PVueApplication = PVueApplication;
