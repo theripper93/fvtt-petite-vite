@@ -13,6 +13,9 @@ Hooks.on("ready", () => {
         resizable: true,
         width: 300,
         height: 400,
+        updateOnClose: true,
+        updateOnChange: true,
+        autoUpdate: true,
       };
     }
   }

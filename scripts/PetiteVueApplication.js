@@ -6,6 +6,33 @@ class PVueApplication extends Application{
     constructor(...args){
         super(...args);
         this._object = args[0].object ?? null;
+        this._hookIds = [];
+    }
+
+    async activateListeners(html) {
+        super.activateListeners(html);
+        if(this.options.updateOnChange){
+            html.on('change', 'input, select, textarea', (event) => this._onSubmit(event));
+        }
+        if(this.options.autoUpdate && this._object?.documentName){
+            const hookId = Hooks.on(`update${this._object.documentName}`, (document, data, options, userId) => {
+                if(document.id === this._object.id){
+                    this._updateVUEData();
+                }
+            });
+            this._hookId = hookId;
+
+            for(let s of Object.values(this._object.schema.fields)){
+                if(s.element?.documentName){
+                    const hookId2 = Hooks.on(`update${s.element.documentName}`, (document, data, options, userId) => {
+                        if(document.parent == this._object){
+                            this._updateVUEData();
+                        }
+                    });
+                    this._hookIds.push(hookId2);
+                }
+            }
+        }
     }
 
     async _renderInner() {
@@ -26,12 +53,55 @@ class PVueApplication extends Application{
         }
     }
 
+    async _updateVUEData(){
+        const newData = await this.getData();
+        updateObjectRecursive(this.store, newData);
+    }
+
+    async _onSubmit(event) {
+        event.preventDefault();
+        await this.updateObject();
+    }
+
     async updateObject() {
         const data = this.store;
         if ( this._object ) {
             await this._object.update(data);
         }
     }
+
+    async close() {
+        if(this.options.updateOnClose){
+            await this.updateObject();
+        }
+        this._hookIds.forEach(hookId => Hooks.off(hookId));
+        return super.close();
+    }
+
+    static get defaultOptions() {
+        return {
+          baseApplication: null,
+          width: null,
+          height: null,
+          top: null,
+          left: null,
+          scale: null,
+          popOut: true,
+          minimizable: true,
+          resizable: false,
+          id: "",
+          classes: [],
+          dragDrop: [],
+          tabs: [],
+          filters: [],
+          title: "",
+          template: null,
+          scrollY: [],
+          updateOnClose: false,
+          updateOnChange: false,
+          autoUpdate: false,
+        };
+      }
 }
 
 async function renderVue(template, data){
@@ -42,6 +112,18 @@ async function renderVue(template, data){
     const store = reactive(data);
     const app = createApp({store, ...helpers}).mount(el);
     return {app, el, store};
+}
+
+function updateObjectRecursive(object1, object2){
+    for (const key in object1) {
+        if (object1.hasOwnProperty(key)) {
+            if(typeof object1[key] === 'object'){
+                updateObjectRecursive(object1[key], object2[key]);
+            }else{
+                if(object1[key] !== object2[key]) object1[key] = object2[key];
+            }
+        }
+    }
 }
 
 const helpers = {
